@@ -65,8 +65,38 @@ def scrape(url):
     return articles
 
 def themeify(url):
+
     parts = url.split('/')
     category = parts[3]
     sub_category = parts[4]
     return category, sub_category
 
+def countPhrases(list_of_article_objects):
+    #TODO: add countPhrases function
+    pass
+
+def compareNewsWebsistes(list_of_article_objects, list_of_article_objects_2nd_website ):
+    #TODO: Add compareNewsWebsites function
+    #TODO: news to accept an argument for categories
+    pass
+
+def compareHTMLCode(url1, url2):
+    #TODO: find diffrences
+    #TODO: the function itself
+    pass
+
+def countMetadata(webpage):
+    #TODO: add logic of the function
+    pass
+
+def compareMetadata(page1, page2):
+
+    metaCount1 = countMetadata(page1)
+    metaCount2 = countMetadata(page2)
+
+    if metaCount1 > metaCount2:
+        return "Page 1 has more metadata"
+    elif metaCount2 > metaCount1:
+        return "Page 2 has more metadata"
+    else:
+        return "Both pages have the same amount of metadata"
