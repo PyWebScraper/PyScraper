@@ -7,3 +7,11 @@ class Article:
         self.date_published = date_published
         self.date_updated = date_updated
         self.most_repeated_phrase = most_repeated_phrase
+
+    def __str__(self):
+        return f"Title: {self.title}\n" \
+               f"Date Published: {self.date_published}\n" \
+               f"Date Updated: {self.date_updated}\n" \
+               f"URL: {self.url}\n" \
+               f"Category: {self.category}\n" \
+               f"Sub Category: {self.sub_category}\n"
