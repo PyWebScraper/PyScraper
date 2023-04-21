@@ -1,5 +1,6 @@
 class Article:
-    def __init__(self, title, category, sub_category, url, date_published, date_updated=None, most_repeated_phrase=None):
+    def __init__(self, title, category, sub_category, url, date_published, date_updated=None, most_repeated_phrase=None,
+                 article_text=None):
         self.title = title
         self.category = category
         self.sub_category = sub_category
@@ -7,6 +8,7 @@ class Article:
         self.date_published = date_published
         self.date_updated = date_updated
         self.most_repeated_phrase = most_repeated_phrase
+        self.article_text = article_text
 
     def __str__(self):
         return f"Title: {self.title}\n" \
