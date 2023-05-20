@@ -1,6 +1,8 @@
 import requests
 from Article import *
 from bs4 import BeautifulSoup
+import matplotlib.pyplot as mpl
+
 
 
 def scrape(url, articleClass, int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory, meta_data_class):
@@ -166,9 +168,6 @@ def countMetadata(webpage, metadata_class):
     #TODO: add logic of the function
     pass
 
-def prettyPrint(list):
-    for item in range(list):
-        print(f"{item}\n")
 
 def compareMetadata(page1, page2, metadata_class_website_one, metadata_class_website_two):
 
@@ -181,3 +180,28 @@ def compareMetadata(page1, page2, metadata_class_website_one, metadata_class_web
         return "Page 2 has more metadata"
     else:
         return "Both pages have the same amount of metadata"
+
+def prettyPrint(list):
+    for item in range(list):
+        print(f"{item}\n")
+
+def printPieChart(dictionary):
+
+    labels = list(dictionary.keys())
+    values = list(dictionary.values())
+
+    mpl.pie(values, labels=labels, autopct='%1.1f%%')
+    mpl.axis('equal')
+
+    mpl.show()
+
+
+def printPieChartFromLists(listOfLabels, listOfValues):
+    labels = list(listOfLabels)
+    values = list(listOfValues)
+
+    mpl.pie(values, labels=labels, autopct='%1.1f%%')
+    mpl.axis('equal')
+
+    mpl.show()
+
