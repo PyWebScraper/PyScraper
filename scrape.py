@@ -163,6 +163,20 @@ def countCategories(list_of_article_objects):
     return article_counts
 
 
+def countSubCategories(list_of_article_objects):
+
+    article_counts = {}
+    for article in list_of_article_objects:
+        sub_category = article.sub_category
+        if sub_category in article_counts:
+            article_counts[sub_category] += 1
+        else:
+            article_counts[sub_category] = 1
+
+    print(article_counts)
+    return article_counts
+
+
 def compareHTMLCode(url1, url2):
     #TODO: find diffrences
     #TODO: the function itself
