@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as mpl
 
 
-
-def scrape(url, articleClass, int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory, meta_data_class):
+def scrape(url, articleClass, int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory, meta_data_class=None):
     # HTTP Get request to the given URL
     response = requests.get(url)
 
@@ -48,9 +47,12 @@ def scrape(url, articleClass, int_Where_In_URL_is_Category, int_Where_in_URL_is_
             else:
                 title = None
 
-            script_tag = article.find('script', {'class': f'{meta_data_class}'})
+            if meta_data_class is not None:
+                script_tag = article.find('script', {'class': f'{meta_data_class}'})
 
             date_published = None
+            time_published = None
+            time_updated = None
             date_updated = None
             articles.append(Article(title=title, date_published=date_published,
                                     date_updated=date_updated, url=article_url,
@@ -156,6 +158,8 @@ def countCategories(list_of_article_objects):
             article_counts[category] += 1
         else:
             article_counts[category] = 1
+
+    print(article_counts)
     return article_counts
 
 
@@ -184,6 +188,7 @@ def compareMetadata(page1, page2, metadata_class_website_one, metadata_class_web
 def prettyPrint(list):
     for item in range(list):
         print(f"{item}\n")
+
 
 def printPieChart(dictionary):
 
