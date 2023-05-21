@@ -7,7 +7,7 @@ import matplotlib.pyplot as mpl
 #TODO: add extraction of date/time published
 #TODO: add extraction of date/time updated
 
-def scrape(url, articleClass, int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory, meta_data_class=None):
+def scrape(url, article_class, int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory, meta_data_class=None):
     # HTTP Get request to the given URL
     response = requests.get(url)
 
@@ -43,7 +43,7 @@ def scrape(url, articleClass, int_Where_In_URL_is_Category, int_Where_in_URL_is_
                 sub_category = None
 
             # category, sub_category = themeify(article_url)
-            article_title_elem = article.find('h2', {'class': f'{articleClass}'})
+            article_title_elem = article.find('h2', {'class': f'{article_class}'})
             if article_title_elem is not None:
                 article_title_in_pieces = article_title_elem.find_all('span')
                 title = ' '.join([element.text for element in article_title_in_pieces])
