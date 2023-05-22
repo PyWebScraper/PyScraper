@@ -22,6 +22,25 @@ def count_word(list_of_article_objects, wordToCount):
             hits.append(article)
     return len(hits)
 
+def count_sub_categories(list_of_article_objects):
+
+    article_counts = {}
+    for article in list_of_article_objects:
+        sub_category = article.sub_category
+        if sub_category in article_counts:
+            article_counts[sub_category] += 1
+        else:
+            article_counts[sub_category] = 1
+
+    print(article_counts)
+    return article_counts
+
+
+def count_metadata(webpage, metadata_class):
+    #TODO: add logic of the function
+    pass
+
+
 
 def compare_news_websistes(list_of_article_objects, list_of_article_objects_2nd_website, word=None, phrase=None,
                            url_website_1=None, url_website_2=None,
@@ -80,19 +99,6 @@ def count_categories(list_of_article_objects):
     return article_counts
 
 
-def count_sub_categories(list_of_article_objects):
-
-    article_counts = {}
-    for article in list_of_article_objects:
-        sub_category = article.sub_category
-        if sub_category in article_counts:
-            article_counts[sub_category] += 1
-        else:
-            article_counts[sub_category] = 1
-
-    print(article_counts)
-    return article_counts
-
 
 def sort_list_of_objects(data, sort_param='title', reverse=False):
     sorted_data = sorted(data, key=lambda x: getattr(x, sort_param), reverse=reverse)
@@ -102,11 +108,6 @@ def sort_list_of_objects(data, sort_param='title', reverse=False):
 def compare_html_code(url1, url2):
     #TODO: find diffrences
     #TODO: the function itself
-    pass
-
-
-def count_metadata(webpage, metadata_class):
-    #TODO: add logic of the function
     pass
 
 
