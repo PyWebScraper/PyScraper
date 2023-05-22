@@ -26,23 +26,6 @@ def count_word(list_of_article_objects, wordToCount):
     return len(hits)
 
 
-def find_articles_with_phrase(list_of_article_objects, phraseToFind):
-    hits = []
-    for article in range(list_of_article_objects):
-        if phraseToFind in list_of_article_objects.text:
-            hits.append(article)
-    return pretty_print(hits)
-
-
-def find_articles_with_word(list_of_article_objects, wordToFind):
-
-    hits = []
-    for article in range(list_of_article_objects):
-        if wordToFind in list_of_article_objects.text:
-            hits.append(article)
-    return pretty_print(hits)
-
-
 def compare_news_websistes(list_of_article_objects, list_of_article_objects_2nd_website, word=None, phrase=None,
                            url_website_1=None, url_website_2=None,
                            metadata_class_url_one=None, metadata_class_url_two=None):
