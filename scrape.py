@@ -2,6 +2,8 @@ import requests
 from Article import *
 from bs4 import BeautifulSoup
 import json
+from datetime import datetime
+
 
 
 #TODO: summary of comparison to PDF
@@ -65,6 +67,16 @@ def scrape(url, article_class, int_where_in_url_is_category,
                     if changes_data is not None:
                         date_published = changes_data.get(published_key)
                         date_updated = changes_data.get(updated_key)
+                        if date_published is not None:
+                            date_published = date_published.rstrip('Z')
+                            datetime_raw = datetime.fromisoformat(date_published)
+                            date_published = datetime_raw.date()
+                            time_published = datetime_raw.time()
+                        if date_updated is not None:
+                            date_updated = date_updated.rstrip('Z')
+                            datetime_raw = datetime.fromisoformat(date_updated)
+                            date_updated = datetime_raw.date()
+                            time_updated = datetime_raw.time()
                     else:
                         date_published = None
                         date_updated = None
@@ -77,9 +89,9 @@ def scrape(url, article_class, int_where_in_url_is_category,
                     date_updated = None
 
 
-            articles.append(Article(title=title, date_published=date_published,
-                                    date_updated=date_updated, word_count=word_count, url=article_url,
-                                    category=category, sub_category=sub_category))
+            articles.append(Article(title=title, date_published=date_published, time_published=time_published,
+                                    date_updated=date_updated, time_updated=time_updated, word_count=word_count,
+                                    url=article_url, category=category, sub_category=sub_category))
 
             #articles.append(Article(category, sub_category, title, date, content))
 
