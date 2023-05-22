@@ -1,6 +1,7 @@
 import requests
 from Article import *
 from bs4 import BeautifulSoup
+import json
 
 
 #TODO: summary of comparison to PDF
@@ -9,7 +10,10 @@ from bs4 import BeautifulSoup
 #TODO: add extraction of date/time published
 #TODO: add extraction of date/time updated
 
-def scrape(url, article_class, int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory, meta_data_class=None):
+def scrape(url, article_class, int_where_in_url_is_category,
+           int_where_in_url_is_sub_category, meta_data_class=None,
+           change_key='changes', published_key='firstPublished', updated_key='updated',
+           word_count_key='wordCount'):
     # HTTP Get request to the given URL
     response = requests.get(url)
 
@@ -32,11 +36,11 @@ def scrape(url, article_class, int_Where_In_URL_is_Category, int_Where_in_URL_is
                 url_parts = article_url.split('/')
                 # Both category and subcategory needs a try except, in case urls are formated diffrently
                 try:
-                    category = url_parts[int_Where_In_URL_is_Category]
+                    category = url_parts[int_where_in_url_is_category]
                 except:
                     category = None
                 try:
-                    sub_category = url_parts[int_Where_in_URL_is_SubCategory]
+                    sub_category = url_parts[int_where_in_url_is_sub_category]
                 except:
                     sub_category = None
             else:
@@ -55,12 +59,26 @@ def scrape(url, article_class, int_Where_In_URL_is_Category, int_Where_in_URL_is
             if meta_data_class is not None:
                 script_tag = article.find('script', {'class': f'{meta_data_class}'})
 
-            date_published = None
-            time_published = None
-            time_updated = None
-            date_updated = None
+                if script_tag is not None:
+                    meta_data = json.loads(script_tag.text)
+                    changes_data = meta_data.get(change_key)
+                    if changes_data is not None:
+                        date_published = changes_data.get(published_key)
+                        date_updated = changes_data.get(updated_key)
+                    else:
+                        date_published = None
+                        date_updated = None
+                    word_count = meta_data.get(word_count_key)
+                else:
+                    date_published = None
+                    word_count = None
+                    time_published = None
+                    time_updated = None
+                    date_updated = None
+
+
             articles.append(Article(title=title, date_published=date_published,
-                                    date_updated=date_updated, url=article_url,
+                                    date_updated=date_updated, word_count=word_count, url=article_url,
                                     category=category, sub_category=sub_category))
 
             #articles.append(Article(category, sub_category, title, date, content))
