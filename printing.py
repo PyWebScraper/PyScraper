@@ -6,14 +6,15 @@ def pretty_print(list):
         print(f"{item}\n")
 
 
-def print_pie_chart(dictionary):
+def print_pie_chart(dictionary, pdf=True):
 
     labels = list(dictionary.keys())
     values = list(dictionary.values())
 
     mpl.pie(values, labels=labels, autopct='%1.1f%%')
     mpl.axis('equal')
-    mpl.savefig("test.pdf", bbox_inches='tight')
+    if pdf:
+        mpl.savefig("test.pdf", bbox_inches='tight')
 
     mpl.show()
 
