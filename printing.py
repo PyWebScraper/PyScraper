@@ -13,6 +13,7 @@ def print_pie_chart(dictionary):
 
     mpl.pie(values, labels=labels, autopct='%1.1f%%')
     mpl.axis('equal')
+    mpl.savefig("test.pdf", bbox_inches='tight')
 
     mpl.show()
 
