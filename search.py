@@ -1,4 +1,4 @@
-from counting import pretty_print
+from printing import pretty_print
 
 
 def find_articles_with_phrase(list_of_article_objects, phraseToFind):

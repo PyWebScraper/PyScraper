@@ -1,4 +1,5 @@
-from counting import count_categories, print_pie_chart
+from counting import count_categories
+from printing import print_pie_chart
 from scrape import *
 
 

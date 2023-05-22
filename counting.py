@@ -1,6 +1,3 @@
-from matplotlib import pyplot as mpl
-
-
 def themeify(url,int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory,):
 
     parts = url.split('/')
@@ -126,27 +123,3 @@ def compare_metadata(page1, page2, metadata_class_website_one, metadata_class_we
         return "Both pages have the same amount of metadata"
 
 
-def pretty_print(list):
-    for item in range(list):
-        print(f"{item}\n")
-
-
-def print_pie_chart(dictionary):
-
-    labels = list(dictionary.keys())
-    values = list(dictionary.values())
-
-    mpl.pie(values, labels=labels, autopct='%1.1f%%')
-    mpl.axis('equal')
-
-    mpl.show()
-
-
-def print_pie_chart_from_lists(list_of_labels, list_of_values):
-    labels = list(list_of_labels)
-    values = list(list_of_values)
-
-    mpl.pie(values, labels=labels, autopct='%1.1f%%')
-    mpl.axis('equal')
-
-    mpl.show()
