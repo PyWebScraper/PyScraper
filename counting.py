@@ -1,3 +1,5 @@
+
+
 def themeify(url,int_Where_In_URL_is_Category, int_Where_in_URL_is_SubCategory,):
 
     parts = url.split('/')
@@ -22,6 +24,21 @@ def count_word(list_of_article_objects, wordToCount):
             hits.append(article)
     return len(hits)
 
+
+def count_categories(list_of_article_objects):
+
+    article_counts = {}
+    for article in list_of_article_objects:
+        category = article.category
+        if category in article_counts:
+            article_counts[category] += 1
+        else:
+            article_counts[category] = 1
+
+    print(article_counts)
+    return article_counts
+
+
 def count_sub_categories(list_of_article_objects):
 
     article_counts = {}
@@ -39,6 +56,8 @@ def count_sub_categories(list_of_article_objects):
 def count_metadata(webpage, metadata_class):
     #TODO: add logic of the function
     pass
+
+
 
 
 
@@ -83,26 +102,6 @@ def compare_news_websistes(list_of_article_objects, list_of_article_objects_2nd_
     print("The two websites have the following spread of categories: ")
     print(f"The 1st website: {count_categories(list_of_article_objects)}")
     print(f"The 2nd website: {count_categories(list_of_article_objects_2nd_website)}")
-
-
-def count_categories(list_of_article_objects):
-
-    article_counts = {}
-    for article in list_of_article_objects:
-        category = article.category
-        if category in article_counts:
-            article_counts[category] += 1
-        else:
-            article_counts[category] = 1
-
-    print(article_counts)
-    return article_counts
-
-
-
-def sort_list_of_objects(data, sort_param='title', reverse=False):
-    sorted_data = sorted(data, key=lambda x: getattr(x, sort_param), reverse=reverse)
-    return sorted_data
 
 
 def compare_html_code(url1, url2):
