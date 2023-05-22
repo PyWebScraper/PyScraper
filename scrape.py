@@ -74,4 +74,9 @@ def scrape(url, article_class, int_Where_In_URL_is_Category, int_Where_in_URL_is
     return articles
 
 
+def themeify(url, int_where_in_url_is_category, int_where_in_url_is_sub_category):
 
+    parts = url.split('/')
+    category = parts[int_where_in_url_is_category]
+    sub_category = parts[int_where_in_url_is_sub_category]
+    return category, sub_category
