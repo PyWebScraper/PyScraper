@@ -9,8 +9,7 @@ from datetime import datetime
 #TODO: summary of comparison to PDF
 #TODO: all articles in category X with different parameters for aplhabetical, by publish date/time, ++
 #TODO: Sumarize ad to Article ratio (how many articles is there per ad)
-#TODO: add extraction of date/time published
-#TODO: add extraction of date/time updated
+
 
 def scrape(url, article_class, int_where_in_url_is_category,
            int_where_in_url_is_sub_category, meta_data_class=None,
