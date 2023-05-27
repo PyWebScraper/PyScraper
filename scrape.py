@@ -4,14 +4,49 @@ from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 
-
-
 #TODO: summary of comparison to PDF
 #TODO: all articles in category X with different parameters for aplhabetical, by publish date/time, ++
 #TODO: Sumarize ad to Article ratio (how many articles is there per ad)
 
 
-def scrape(url, article_class, int_where_in_url_is_category,
+class WebScraper:
+    def __init__(self):
+        self.session = requests.Session()
+
+    def scrape(self, url, data_type):
+        response = self.session.get(url)
+        if response.status_code == 200:
+            if data_type == 'html':
+                return response.content
+            elif data_type == 'json':
+                return response.json()
+            else:
+                raise ValueError(f"Unsupported data type: {data_type}")
+        else:
+            raise Exception(f"Request failed with status code {response.status_code}")
+
+"""
+def pretty_print_html(html_content, indent_size=4, initial_indent=0):
+    result = ""
+
+    # Convert bytes to string
+    decoded_content = html_content.decode('utf-8')
+
+    for char in decoded_content:
+        if char == '<':
+            result += "\n" + " " * (indent_size * initial_indent) + char
+            initial_indent += 1
+        elif char == '>':
+            result += char
+            if initial_indent > 0:
+                initial_indent -= 1
+        else:
+            result += char
+
+    print(result)
+
+
+def scrape2(url, article_class, int_where_in_url_is_category,
            int_where_in_url_is_sub_category, meta_data_class=None,
            change_key='changes', published_key='firstPublished', updated_key='updated',
            word_count_key='wordCount'):
@@ -111,3 +146,4 @@ def themeify(url, int_where_in_url_is_category, int_where_in_url_is_sub_category
     return category, sub_category
 
 
+"""

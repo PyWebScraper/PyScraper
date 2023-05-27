@@ -3,9 +3,6 @@ from matplotlib.backends.backend_pdf import FigureCanvasPdf
 import matplotlib.pyplot as mpl
 from printing import *
 
-
-
-'''
 def create_pdf(output_file, font='Helvetica', fontsize=12, start_location_y_position=700, *elements):
 
    # Creates a PDF file with whatever elements the user wants to include. can f.ex be used to create a report.
@@ -33,4 +30,3 @@ def create_pdf(output_file, font='Helvetica', fontsize=12, start_location_y_posi
         frame.drawString(50, start_location_y, str(element))
         start_location_y -= 20  # Decreases the Y coodrinate between each element.
     frame.save()
-'''

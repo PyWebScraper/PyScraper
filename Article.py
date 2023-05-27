@@ -1,3 +1,15 @@
+
+class ScrapedData:
+    def __init__(self):
+        self.fields = {}
+
+    def add_field(self, field_name, field_value):
+        self.fields[field_name] = field_value
+
+    def get_field_value(self, field_name):
+        return self.fields.get(field_name)
+
+
 class Article:
     def __init__(self, title="Unknown", category="unidentified", sub_category=None, url=None,
                  date_published=None, time_published=None,
