@@ -42,6 +42,7 @@ class WebPage:
         print("Page HTML:")
         self.pretty_print_html(self.html_content)
 
+
 class NewsSite(WebPage):
     def __init__(self, url, html_content, name):
         super().__init__(url, html_content)
