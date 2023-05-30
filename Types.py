@@ -1,6 +1,20 @@
 
 class WebPage:
+    """Represents a web page."""
     def __init__(self, url, html_content, name, **kwargs):
+        """Initialize a WebPage object.
+
+                Args:
+                    url (str): The URL of the web page.
+                    html_content (str): The HTML content of the web page.
+                    name (str, optional): The name of the web page. Defaults to an empty string.
+                    sub_urls (list, optional): A list of sub-URLs associated with the web page. Defaults to None.
+                    **kwargs: Additional user-defined attributes.
+
+                Example:
+                    page = WebPage(url='https://example.com', html_content='<html>...</html>', name='Example Page')
+                """
+
         self.url = url
         self.html_content = html_content
         self.name = name
@@ -12,6 +26,16 @@ class WebPage:
 
     @staticmethod
     def pretty_print_html(html_content, indent_size=4, initial_indent=0):
+        """Pretty print the HTML content of the web page.
+
+               Args:
+                   indent_size (int, optional): The size of the indentation. Defaults to 4.
+
+               Example:
+                   page = WebPage(url='https://example.com', html_content='<html>...</html>')
+                   page.pretty_print_html()
+               """
+
         result = ""
 
         # Convert bytes to string
@@ -44,7 +68,21 @@ class WebPage:
 
 
 class NewsSite(WebPage):
+    """Represents a news site."""
     def __init__(self, url, html_content, name):
+        """Initialize a NewsSite object.
+
+               Args:
+                   url (str): The URL of the news site.
+                   html_content (str): The HTML content of the news site.
+                   name (str, optional): The name of the news site. Defaults to an empty string.
+                   sub_urls (list, optional): A list of sub-URLs associated with the news site. Defaults to None.
+                   latest_articles (list, optional): A list of latest articles on the news site. Defaults to None.
+                   **kwargs: Additional user-defined attributes.
+
+               Example:
+                   news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
+               """
         super().__init__(url, html_content)
         self.name = name
 
@@ -52,8 +90,22 @@ class NewsSite(WebPage):
         print("News Site Name:", self.name)
 
 
-class Store(WebPage):
+class WebStore(WebPage):
+    """Represents a web store."""
     def __init__(self, url, html_content, name):
+        """Initialize a WebStore object.
+
+               Args:
+                   url (str): The URL of the web store.
+                   html_content (str): The HTML content of the web store.
+                   name (str, optional): The name of the web store. Defaults to an empty string.
+                   sub_urls (list, optional): A list of sub-URLs associated with the web store. Defaults to None.
+                   products (list, optional): A list of products available in the web store. Defaults to None.
+                   **kwargs: Additional user-defined attributes.
+
+               Example:
+                   web_store = WebStore(url='https://example.com', html_content='<html>...</html>', name='Example Web Store')
+               """
         super().__init__(url, html_content)
         self.name = name
 
