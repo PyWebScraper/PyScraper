@@ -1,3 +1,5 @@
+from scrape import ElementSelector
+
 
 class WebPage:
     """Represents a web page."""
@@ -69,26 +71,41 @@ class WebPage:
 
 class NewsSite(WebPage):
     """Represents a news site."""
-    def __init__(self, url, html_content, name):
+    def __init__(self, name, url, scraper):
         """Initialize a NewsSite object.
 
-               Args:
-                   url (str): The URL of the news site.
-                   html_content (str): The HTML content of the news site.
-                   name (str, optional): The name of the news site. Defaults to an empty string.
-                   sub_urls (list, optional): A list of sub-URLs associated with the news site. Defaults to None.
-                   latest_articles (list, optional): A list of latest articles on the news site. Defaults to None.
-                   **kwargs: Additional user-defined attributes.
+            Args:
+                url (str): The URL of the news site.
+                html_content (str): The HTML content of the news site.
+                name (str, optional): The name of the news site. Defaults to an empty string.
+                sub_urls (list, optional): A list of sub-URLs associated with the news site. Defaults to None.
+                latest_articles (list, optional): A list of latest articles on the news site. Defaults to None.
+                **kwargs: Additional user-defined attributes.
 
-               Example:
-                   news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
-               """
-        super().__init__(url, html_content)
-        self.name = name
+            Example:
+                news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
+        """
+        super().__init__(name, url, scraper)
+        self.articles = []
 
-    def print_name(self):
-        print("News Site Name:", self.name)
 
+
+
+ def scrape_articles(self, selector):
+        """Scrapes articles from the news site based on the provided selector."""
+        html_content = self.scraper.scrape(self.url, 'html')
+        article_elements = ElementSelector.extract_elements_by_css_selector(html_content, selector)
+        self.articles = [Article(element) for element in article_elements]
+
+
+class Article(WebPage):
+    def __init__(self, name, url, scraper):
+        super().__init__(name, url, scraper)
+        self.content = ""
+
+    def scrape_content(self):
+        """Scrapes the content of the article."""
+        html_content = self.scraper.scrape(self.url, 'html')
 
 class WebStore(WebPage):
     """Represents a web store."""
