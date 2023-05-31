@@ -14,11 +14,11 @@ Steps to get PyScraper up and running:
 > python3 -m venv venv
 ''''
 * activate the virtual environment
-''''
->  /venv/Scripts/activate.ps1
+````
+> /venv/Scripts/activate.ps1
 # or
 > /venv/Scripts/activate.bat
-''''
+````
 If you are on unix systems
 ''''
 > source venv/bin/activate
