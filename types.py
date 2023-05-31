@@ -128,25 +128,26 @@ class WebStore(WebPage):
         """Scrapes articles from the news site based on the provided selector."""
         html_content = self.scraper.scrape(self.url, 'html')
         product_elements = ElementSelector.extract_elements_by_css_selector(html_content, selector)
-        self.products = [Article(name="Article", url=self.url, scraper=self.scraper) for _ in product_elements]
+        self.products = [Product(name="Article", url=self.url, scraper=self.scraper) for _ in product_elements]
 
 
 class Product(WebPage):
-    """Represents a product."""
-    def __init__(self, name, url, html_content):
-        """Initialize a Product object.
+    """Represents an product on a webstore."""
+    def __init__(self, name, url, scraper):
+        """
+        Initialize an Product object.
 
-               Args:
-                   name (str): The name of the product.
-                   url (str): The URL of the product.
-                   html_content (str): The HTML content of the product.
-                   scraper (WebScraper): The web scraper instance.
+        Args:
+            name (str): The name of the article.
+            url (str): The URL of the article.
+            scraper (WebScraper): The web scraper used for scraping the article.
 
-               Example:
-                   product = Product(name='Product 1', url='https://www.example.com/product1', html_content='<html>...</html>', scraper=scraper)
-               """
-        super().__init__(url, html_content, name)
-        self.description = ""
+        Example:
+            product = Product(name='Example Product', url='https://example.com/article', scraper=scraper)
+        """
+        super().__init__(name, url, "", scraper=scraper)
+        self.scraper = scraper
+        self.content = ""
 
     def scrape_description(self, html_content):
         """Scrapes the description of the product.
