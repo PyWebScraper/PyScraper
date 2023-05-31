@@ -1,9 +1,9 @@
 import requests
 import urllib.parse
-import http.client
 import concurrent.futures
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 import re
+import threading
 
 
 class Scraper:
@@ -148,31 +148,50 @@ class WebCrawler:
         crawled_urls = []
         visited_urls = set()
         queue = [(url, 0)]
+        active_threads = 0
+        active_threads_lock = threading.Lock()
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-            while queue:
-                current_url, depth = queue.pop(0)
+        def crawl_worker():
+            nonlocal active_threads
+            with active_threads_lock:
+                active_threads += 1
+                print(f"Number of active threads: {active_threads}")
+
+            while True:
+                try:
+                    current_url, depth = queue.pop(0)
+                except IndexError:
+                    break
 
                 if depth > max_depth:
                     continue
 
-                if current_url not in visited_urls:
-                    visited_urls.add(current_url)
-                    print(f"Crawling {current_url} at depth {depth}")
+                if current_url in visited_urls:
+                    continue
 
-                    try:
-                        html_content = self.scrape(current_url, 'html')
-                        print(f"HTML content: {html_content}")
-                        parsed_urls = self.extract_urls(html_content, current_url)
-                        print(f"Parsed URLs: {parsed_urls}")
-                        crawled_urls.append(current_url)
+                visited_urls.add(current_url)
+                print(f"Crawling {current_url} at depth {depth}")
 
-                        for parsed_url in parsed_urls:
-                            queue.append((parsed_url, depth + 1))
-                    except Exception as e:
-                        print(f"Error occurred while crawling {current_url}: {str(e)}")
+                try:
+                    html_content = self.scrape(current_url, 'html')
+                    parsed_urls = self.extract_urls(html_content, current_url)
+                    crawled_urls.append(current_url)
 
-                return crawled_urls
+                    for parsed_url in parsed_urls:
+                        queue.append((parsed_url, depth + 1))
+                except Exception as e:
+                    print(f"Error occurred while crawling {current_url}: {str(e)}")
+
+            with active_threads_lock:
+                active_threads -= 1
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+            while queue:
+                with active_threads_lock:
+                    if active_threads < num_threads:
+                        executor.submit(crawl_worker)
+
+        return crawled_urls
 
     def scrape(self, url, data_type):
         web_scraper = WebScraper()
@@ -232,58 +251,25 @@ class WebCrawler:
         for url in urls:
             print(url)
 
+
     def extract_urls(self, html_content, base_url):
         """Extracts URLs from the HTML content.
 
-               Args:
-                   html_content (str): The HTML content to extract URLs from.
-                   base_url (str): The base URL of the web page.
+        Args:
+            html_content (str): The HTML content to extract URLs from.
+            base_url (str): The base URL of the web page.
 
-               Returns:
-                   list: A list of extracted URLs.
-
-               Example:
-                   crawler = WebCrawler()
-                   html_content = crawler.scrape('https://example.com')
-                   urls = crawler.extract_urls(html_content, 'https://example.com')
-                   for url in urls:
-                       print(url)
-               """
-        start_tag = '<a'
-        end_tag = '</a>'
-        href_attr = 'href='
-        url_prefixes = ('http://', 'https://')
-
+        Returns:
+            list: A list of extracted URLs.
+        """
+        pattern = r'<a\s+(?:[^>]*?\s+)?href=(["\'])(.*?)\1'
         urls = []
 
-        parsed_base_url = urlparse(base_url)
+        for match in re.finditer(pattern, html_content):
+            href = match.group(2)
+            absolute_url = urljoin(base_url, href)
+            urls.append(absolute_url)
 
-        while True:
-            start_index = html_content.find(start_tag)
-            if start_index == -1:
-                break
-
-            end_index = html_content.find(end_tag, start_index)
-            if end_index == -1:
-                break
-
-            anchor_content = html_content[start_index:end_index]
-            href_index = anchor_content.find(href_attr)
-            if href_index == -1:
-                continue
-
-            href_start = anchor_content.find('"', href_index) + 1
-            href_end = anchor_content.find('"', href_start)
-            href = anchor_content[href_start:href_end]
-
-            if href.startswith(url_prefixes):
-                urls.append(href)
-            else:
-                absolute_url = urljoin(parsed_base_url.geturl(), href)
-                urls.append(absolute_url)
-
-            html_content = html_content[end_index:]
-        print(urls)
         return urls
 
 
