@@ -1,22 +1,23 @@
 from scrape import WebCrawler, WebScraper, Scraper
 from Types import NewsSite, WebStore
 
-
 num = 0
-while (num < 1):
-
+while num < 1:
     # Create an instance of WebCrawler and WebScraper
     crawler = WebCrawler()
     scraper = WebScraper()
+    scrape = Scraper()
+
+    html_content = scraper.scrape('https://example.com', 'html')
+    scrape.export_to_file(html_content, 'output.html')
 
     # Create a NewsSite object for vg.no
     vg_news_site = NewsSite("VG", "https://www.vg.no", scraper)
-    vg_news_site.scraper = scraper
-    vg_news_site.max_depth = 1  # Set the maximum depth
+    vg_news_site.max_depth = 0  # Set the maximum depth
 
     # Create a WebStore object for komplett.no
     komplett_web_store = WebStore("Komplett", "https://www.komplett.no", scraper)
-    komplett_web_store.max_depth = 1  # Set the maximum depth
+    komplett_web_store.max_depth = 0  # Set the maximum depth
 
     # Define the URLs to start crawling
     start_urls = ["https://www.vg.no", "https://www.komplett.no"]
@@ -24,11 +25,12 @@ while (num < 1):
     # Crawl and scrape the websites
     for url in start_urls:
         if url.startswith("https://www.vg.no"):
-            #crawler.crawl(url, vg_news_site.max_depth)
+            crawler.crawl(url, vg_news_site.max_depth)
             vg_news_site.scrape_articles('.article')
+
         elif url.startswith("https://www.komplett.no"):
             crawler.crawl(url, komplett_web_store.max_depth)
-            komplett_web_store.scrape_products()
+            print(komplett_web_store.scrape_products(".product-box-container"))
 
     # Access the scraped data
     print("Latest articles from VG:")
@@ -40,6 +42,7 @@ while (num < 1):
         print(product.title)
 
     num += 1
+
     """
     url = 'https://www.vg.no'
     field_mappings = {

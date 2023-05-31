@@ -3,7 +3,7 @@ from scrape import ElementSelector, WebScraper
 
 class WebPage:
     """Represents a web page."""
-    def __init__(self, url, html_content, name, **kwargs):
+    def __init__(self, name, url, html_content, **kwargs):
         """Initialize a WebPage object.
 
                 Args:
@@ -58,7 +58,6 @@ class WebPage:
         print(result)
 
 
-
 class NewsSite(WebPage):
     """Represents a news site."""
     def __init__(self, name, url, scraper):
@@ -76,24 +75,34 @@ class NewsSite(WebPage):
                 news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
         """
         super().__init__(name, url, scraper)
-
+        self.scraper = scraper
         self.articles = []
 
     def scrape_articles(self, selector):
         """Scrapes articles from the news site based on the provided selector."""
         html_content = self.scraper.scrape(self.url, 'html')
         article_elements = ElementSelector.extract_elements_by_css_selector(html_content, selector)
-        self.articles = [Article(element) for element in article_elements]
+        self.articles = [Article(name="Article", url=self.url, scraper=self.scraper) for _ in article_elements]
 
 
 class Article(WebPage):
+    """Represents an article on a news site."""
     def __init__(self, name, url, scraper):
-        super().__init__(name, url, scraper)
+        """
+        Initialize an Article object.
+
+        Args:
+            name (str): The name of the article.
+            url (str): The URL of the article.
+            scraper (WebScraper): The web scraper used for scraping the article.
+
+        Example:
+            article = Article(name='Example Article', url='https://example.com/article', scraper=scraper)
+        """
+        super().__init__(name, url, "", scraper=scraper)
+        self.scraper = scraper
         self.content = ""
 
-    def scrape_content(self, scraper):
-        """Scrapes the content of the article."""
-        html_content = self.scraper.scrape(self.url, 'html')
 
 class WebStore(WebPage):
     """Represents a web store."""
@@ -112,24 +121,19 @@ class WebStore(WebPage):
                    web_store = WebStore(url='https://example.com', html_content='<html>...</html>', name='Example Web Store')
                """
         super().__init__(name, url, scraper)
+        self.scraper = scraper
         self.products = []
 
     def scrape_products(self, selector):
-        """Scrapes products from the web store based on the provided selector.
+        """Scrapes articles from the news site based on the provided selector."""
+        html_content = self.scraper.scrape(self.url, 'html')
+        product_elements = ElementSelector.extract_elements_by_css_selector(html_content, selector)
+        self.products = [Article(name="Article", url=self.url, scraper=self.scraper) for _ in product_elements]
 
-               Args:
-                   selector (str): The selector to identify product elements.
-
-               Example:
-                   web_store = WebStore(name='Komplett', url='https://www.komplett.no', html_content='<html>...</html>', scraper=scraper)
-                   web_store.scrape_products(selector='.product')
-               """
-        product_elements = ElementSelector.extract_elements_by_css_selector(self.html_content, selector)
-        self.products = [Product(element) for element in product_elements]
 
 class Product(WebPage):
     """Represents a product."""
-    def __init__(self, name, url, html_content, scraper):
+    def __init__(self, name, url, html_content):
         """Initialize a Product object.
 
                Args:
@@ -141,7 +145,7 @@ class Product(WebPage):
                Example:
                    product = Product(name='Product 1', url='https://www.example.com/product1', html_content='<html>...</html>', scraper=scraper)
                """
-        super().__init__(url, html_content, name, scraper)
+        super().__init__(url, html_content, name)
         self.description = ""
 
     def scrape_description(self, html_content):
