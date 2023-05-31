@@ -1,9 +1,10 @@
 import requests
-import urllib.parse
 import concurrent.futures
 from urllib.parse import urljoin
 import re
 import threading
+import csv
+import json
 
 
 class Scraper:
@@ -21,11 +22,6 @@ class Scraper:
         Raises:
             ValueError: If an unsupported data type is provided.
             Exception: If the request fails with a non-200 status code.
-
-        Example:
-            scraper = Scraper()
-            html_content = scraper.scrape('https://example.com', 'html')
-            json_data = scraper.scrape('https://example.com/api', 'json')
         """
         session = requests.Session()
         response = session.get(url)
@@ -39,6 +35,30 @@ class Scraper:
         else:
             raise Exception(f"Request failed with status code {response.status_code}")
 
+    @staticmethod
+    def export_to_file(data, file_path, fields=None):
+        """Exports the scraped data to a file.
+
+        Args:
+            data: The data to export.
+            file_path (str): The path to the output file.
+            fields (list, optional): The fields to include in the output file. Defaults to None.
+        """
+        if isinstance(data, bytes):
+            data = data.decode()
+
+        if isinstance(data, str):
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(data)
+        elif isinstance(data, dict):
+            if not fields:
+                fields = list(data.keys())
+            with open(file_path, 'w', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=fields)
+                writer.writeheader()
+                writer.writerow(data)
+        else:
+            raise ValueError("Invalid data type. Expected bytes or dict.")
 
 class WebScraper:
     """A web crawler for scraping and extracting URLs from web pages."""
