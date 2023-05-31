@@ -8,13 +8,10 @@ while (num < 1):
     # Create an instance of WebCrawler and WebScraper
     crawler = WebCrawler()
     scraper = WebScraper()
-    scrape = Scraper()
-
-    html_content = scraper.scrape('https://example.com', 'html')
-    scrape.export_to_file(html_content, 'output.html')
 
     # Create a NewsSite object for vg.no
     vg_news_site = NewsSite("VG", "https://www.vg.no", scraper)
+    vg_news_site.scraper = scraper
     vg_news_site.max_depth = 1  # Set the maximum depth
 
     # Create a WebStore object for komplett.no
@@ -27,8 +24,8 @@ while (num < 1):
     # Crawl and scrape the websites
     for url in start_urls:
         if url.startswith("https://www.vg.no"):
-            crawler.crawl(url, vg_news_site.max_depth)
-            vg_news_site.scrape_articles()
+            #crawler.crawl(url, vg_news_site.max_depth)
+            vg_news_site.scrape_articles('.article')
         elif url.startswith("https://www.komplett.no"):
             crawler.crawl(url, komplett_web_store.max_depth)
             komplett_web_store.scrape_products()

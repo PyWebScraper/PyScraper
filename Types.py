@@ -58,16 +58,6 @@ class WebPage:
         print(result)
 
 
-    def print_name(self):
-        print("Page Name:", self.name)
-
-    def print_url(self):
-        print("Page URL:", self.url)
-
-    def print_html(self):
-        print("Page HTML:")
-        self.pretty_print_html(self.html_content)
-
 
 class NewsSite(WebPage):
     """Represents a news site."""

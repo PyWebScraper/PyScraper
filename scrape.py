@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 import re
 import threading
 import csv
-import json
 
 
 class Scraper:
