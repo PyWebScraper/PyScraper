@@ -6,7 +6,7 @@ Steps to get PyScraper up and running:
 
 Unzip to a suitable location on your computer.
 Open a terminal in the unzipped folder
-create a python virtual environment
+create a python virtual environment.
 > python3 -m venv venv
 activate the virtual environment
 > /venv/Scripts/activate.ps1
