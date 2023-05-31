@@ -2,33 +2,33 @@ import requests
 import urllib.parse
 import http.client
 import concurrent.futures
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 import re
 
 
+class Scraper:
+    @staticmethod
+    def scrape(url, data_type):
+        """Scrapes data from a given URL.
 
-class WebScraper:
-    """A web crawler for scraping and extracting URLs from web pages."""
+        Args:
+            url (str): The URL to scrape.
+            data_type (str): The type of data to scrape ('html' or 'json').
 
-    def __init__(self):
-        self.session = requests.Session()
-        self.visited_urls = set()
-        self.queue = []
+        Returns:
+            bytes or dict: The scraped data.
 
-    def scrape(self, url, data_type="html"):
-        """Scrapes the content of the specified URL.
+        Raises:
+            ValueError: If an unsupported data type is provided.
+            Exception: If the request fails with a non-200 status code.
 
-                Args:
-                    url (str): The URL to scrape.
-
-                Returns:
-                    str: The scraped HTML content.
-
-                Raises:
-                    Exception: If the request fails or returns a non-200 status code.
-                """
-
-        response = self.session.get(url)
+        Example:
+            scraper = Scraper()
+            html_content = scraper.scrape('https://example.com', 'html')
+            json_data = scraper.scrape('https://example.com/api', 'json')
+        """
+        session = requests.Session()
+        response = session.get(url)
         if response.status_code == 200:
             if data_type == 'html':
                 return response.content
@@ -39,60 +39,32 @@ class WebScraper:
         else:
             raise Exception(f"Request failed with status code {response.status_code}")
 
-    def parse_html(self, url, html_content):
-        """Parses the HTML content and extracts URLs.
 
-               Args:
-                   url (str): The URL of the web page.
-                   html_content (str): The HTML content to parse.
+class WebScraper:
+    """A web crawler for scraping and extracting URLs from web pages."""
 
-               Returns:
-                   list: A list of extracted URLs.
+    def __init__(self):
+        self.scraper = Scraper()
 
-               Example:
-                   crawler = WebCrawler()
-                   html_content = crawler.scrape('https://example.com')
-                   urls = crawler.parse_html('https://example.com', html_content)
-                   for url in urls:
-                       print(url)
-               """
+    def scrape(self, url, data_type):
+        """Scrapes data from a given URL.
 
-        start_tag = '<a'
-        end_tag = '</a>'
-        href_attr = 'href='
-        url_prefixes = ('http://', 'https://')
+        Args:
+            url (str): The URL to scrape.
+            data_type (str): The type of data to scrape ('html' or 'json').
 
-        urls = []
+        Returns:
+            str or dict: The scraped data as a string (HTML) or a dictionary (JSON).
 
-        while True:
-            start_index = html_content.find(start_tag)
-            if start_index == -1:
-                break
-
-            end_index = html_content.find(end_tag, start_index)
-            if end_index == -1:
-                break
-
-            anchor_content = html_content[start_index:end_index]
-            href_index = anchor_content.find(href_attr)
-            if href_index == -1:
-                continue
-
-            href_start = anchor_content.find('"', href_index) + 1
-            href_end = anchor_content.find('"', href_start)
-            href = anchor_content[href_start:href_end]
-
-            if href.startswith(url_prefixes):
-                urls.append(href)
-            else:
-                absolute_url = urljoin(url, href)
-                urls.append(absolute_url)
-
-            html_content = html_content[end_index:]
-
-        # Example: Print extracted URLs
-        for url in urls:
-            print(url)
+        Example:
+            web_scraper = WebScraper()
+            html_content = web_scraper.scrape('https://example.com', 'html')
+            json_data = web_scraper.scrape('https://example.com/api', 'json')
+        """
+        content = self.scraper.scrape(url, data_type)
+        if data_type == 'html':
+            return content.decode('utf-8')  # Decode content into a string
+        return content
 
     def extract_urls(self, html_content, parsed_url):
         """Extracts URLs from the HTML content.
@@ -186,33 +158,25 @@ class WebCrawler:
 
                 if current_url not in visited_urls:
                     visited_urls.add(current_url)
-                    html_content = self.scrape(current_url, 'html')
-                    parsed_urls = self.extract_urls(current_url, html_content)
+                    print(f"Crawling {current_url} at depth {depth}")
 
-                    crawled_urls.append(current_url)
+                    try:
+                        html_content = self.scrape(current_url, 'html')
+                        print(f"HTML content: {html_content}")
+                        parsed_urls = self.extract_urls(html_content, current_url)
+                        print(f"Parsed URLs: {parsed_urls}")
+                        crawled_urls.append(current_url)
 
-                    for parsed_url in parsed_urls:
-                        queue.append((parsed_url, depth + 1))
+                        for parsed_url in parsed_urls:
+                            queue.append((parsed_url, depth + 1))
+                    except Exception as e:
+                        print(f"Error occurred while crawling {current_url}: {str(e)}")
 
-        return crawled_urls
+                return crawled_urls
 
-    def scrape(self, url):
-        """Scrapes the content of the specified URL.
-
-        Args:
-            url (str): The URL to scrape.
-
-        Returns:
-            str: The scraped HTML content.
-
-        Raises:
-            Exception: If the request fails or returns a non-200 status code.
-        """
-        response = self.session.get(url)
-        if response.status_code == 200:
-            return response.content.decode('utf-8')
-        else:
-            raise Exception(f"Request failed with status code {response.status_code}")
+    def scrape(self, url, data_type):
+        web_scraper = WebScraper()
+        return web_scraper.scrape(url, data_type)
 
     def parse_html(self, url, html_content):
         """Parses the HTML content and extracts URLs.
@@ -268,12 +232,12 @@ class WebCrawler:
         for url in urls:
             print(url)
 
-    def extract_urls(self, html_content, parsed_url):
+    def extract_urls(self, html_content, base_url):
         """Extracts URLs from the HTML content.
 
                Args:
                    html_content (str): The HTML content to extract URLs from.
-                   parsed_url (urllib.parse.ParseResult): The parsed URL of the web page.
+                   base_url (str): The base URL of the web page.
 
                Returns:
                    list: A list of extracted URLs.
@@ -281,8 +245,7 @@ class WebCrawler:
                Example:
                    crawler = WebCrawler()
                    html_content = crawler.scrape('https://example.com')
-                   parsed_url = crawler.parse_url('https://example.com')
-                   urls = crawler.extract_urls(html_content, parsed_url)
+                   urls = crawler.extract_urls(html_content, 'https://example.com')
                    for url in urls:
                        print(url)
                """
@@ -292,6 +255,8 @@ class WebCrawler:
         url_prefixes = ('http://', 'https://')
 
         urls = []
+
+        parsed_base_url = urlparse(base_url)
 
         while True:
             start_index = html_content.find(start_tag)
@@ -314,11 +279,11 @@ class WebCrawler:
             if href.startswith(url_prefixes):
                 urls.append(href)
             else:
-                absolute_url = urljoin(parsed_url.geturl(), href)
+                absolute_url = urljoin(parsed_base_url.geturl(), href)
                 urls.append(absolute_url)
 
             html_content = html_content[end_index:]
-
+        print(urls)
         return urls
 
 

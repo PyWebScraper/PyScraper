@@ -27,7 +27,7 @@ class WebPage:
 
 
     @staticmethod
-    def pretty_print_html(url, indent_size=4, initial_indent=0):
+    def pretty_print_html(html_content, indent_size=4, initial_indent=0):
         """Pretty print the HTML content of the web page.
 
                Args:
@@ -39,7 +39,6 @@ class WebPage:
                """
 
         result = ""
-        html_content = WebScraper.scrape(url)
 
         # Convert bytes to string
 
@@ -87,6 +86,7 @@ class NewsSite(WebPage):
                 news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
         """
         super().__init__(name, url, scraper)
+
         self.articles = []
 
     def scrape_articles(self, selector):
