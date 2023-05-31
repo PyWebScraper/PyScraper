@@ -86,7 +86,7 @@ class NewsSite(WebPage):
                 news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
         """
         super().__init__(name, url, scraper)
-        self.articles = []
+        self.articles =  []
 
 
 
@@ -103,7 +103,7 @@ class Article(WebPage):
         super().__init__(name, url, scraper)
         self.content = ""
 
-    def scrape_content(self):
+    def scrape_content(self, scraper):
         """Scrapes the content of the article."""
         html_content = self.scraper.scrape(self.url, 'html')
 
