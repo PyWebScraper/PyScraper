@@ -1,5 +1,4 @@
-from scrape import ElementSelector, WebScraper
-
+from scrape import ElementSelector
 
 class WebPage:
     """Represents a web page."""
@@ -87,7 +86,7 @@ class NewsSite(WebPage):
 
 class Article(WebPage):
     """Represents an article on a news site."""
-    def __init__(self, name, url, scraper):
+    def __init__(self, name, url, scraper, **kwargs):
         """
         Initialize an Article object.
 
@@ -95,13 +94,18 @@ class Article(WebPage):
             name (str): The name of the article.
             url (str): The URL of the article.
             scraper (WebScraper): The web scraper used for scraping the article.
+            **kwargs: Additional user-defined attributes.
 
         Example:
-            article = Article(name='Example Article', url='https://example.com/article', scraper=scraper)
+            article = Article(name='Example Article', url='https://example.com/article', scraper=scraper, custom_attr='value')
         """
-        super().__init__(name, url, "", scraper=scraper)
+        super().__init__(name, url, scraper=scraper)
         self.scraper = scraper
-        self.content = ""
+
+        # Set user-defined attributes
+        for attr_name, attr_value in kwargs.items():
+            setattr(self, attr_name, attr_value)
+
 
 
 class WebStore(WebPage):
@@ -124,30 +128,29 @@ class WebStore(WebPage):
         self.scraper = scraper
         self.products = []
 
-    def scrape_products(self, selector):
-        """Scrapes articles from the news site based on the provided selector."""
-        html_content = self.scraper.scrape(self.url, 'html')
-        product_elements = ElementSelector.extract_elements_by_css_selector(html_content, selector)
-        self.products = [Product(name="Article", url=self.url, scraper=self.scraper) for _ in product_elements]
-
 
 class Product(WebPage):
-    """Represents an product on a webstore."""
-    def __init__(self, name, url, scraper):
+    """Represents a product on a webstore."""
+    def __init__(self, name, url, scraper, **kwargs):
         """
-        Initialize an Product object.
+        Initialize a Product object.
 
         Args:
-            name (str): The name of the article.
-            url (str): The URL of the article.
-            scraper (WebScraper): The web scraper used for scraping the article.
+            name (str): The name of the product.
+            url (str): The URL of the product.
+            scraper (WebScraper): The web scraper used for scraping the product.
+            **kwargs: Additional user-defined attributes.
 
         Example:
-            product = Product(name='Example Product', url='https://example.com/article', scraper=scraper)
+            product = Product(name='Example Product', url='https://example.com/product', scraper=scraper, custom_attr='value')
         """
         super().__init__(name, url, "", scraper=scraper)
         self.scraper = scraper
         self.content = ""
+
+        # Set user-defined attributes
+        for attr_name, attr_value in kwargs.items():
+            setattr(self, attr_name, attr_value)
 
     def scrape_description(self, html_content):
         """Scrapes the description of the product.
