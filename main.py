@@ -23,6 +23,7 @@ while (num < 1):
     # Crawl and scrape the websites
     for url in start_urls:
         if url.startswith("https://www.vg.no"):
+            vg_news_site.pretty_print_html(url="https://www.vg.no")
             crawler.crawl(url, vg_news_site.max_depth)
             vg_news_site.scrape_articles()
         elif url.startswith("https://www.komplett.no"):

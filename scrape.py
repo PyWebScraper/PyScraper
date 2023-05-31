@@ -15,7 +15,7 @@ class WebScraper:
         self.visited_urls = set()
         self.queue = []
 
-    def scrape(self, url, data_type):
+    def scrape(self, url, data_type="html"):
         """Scrapes the content of the specified URL.
 
                 Args:
