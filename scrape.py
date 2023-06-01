@@ -176,10 +176,6 @@ def parse_html(url, html_content):
 
         html_content = html_content[end_index:]
 
-    # Example: Print extracted URLs
-    for url in urls:
-        print(url)
-
     return urls
 
 

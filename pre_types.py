@@ -43,19 +43,30 @@ class WebPage:
         result = ""
 
         # Convert bytes to string
-        #decoded_content = html_content.decode('utf-8')
 
-        for char in html_content:
-            if char == '<':
-                result += "\n" + " " * (indent_size * initial_indent) + char
-                initial_indent += 1
-            elif char == '>':
-                result += char
-                if initial_indent > 0:
-                    initial_indent -= 1
-            else:
-                result += char
-
+        try:
+            for char in html_content:
+                if char == '<':
+                    result += "\n" + " " * (indent_size * initial_indent) + char
+                    initial_indent += 1
+                elif char == '>':
+                    result += char
+                    if initial_indent > 0:
+                        initial_indent -= 1
+                else:
+                    result += char
+        except:
+            decoded_content = html_content.decode('utf-8')
+            for char in decoded_content:
+                if char == '<':
+                    result += "\n" + " " * (indent_size * initial_indent) + char
+                    initial_indent += 1
+                elif char == '>':
+                    result += char
+                    if initial_indent > 0:
+                        initial_indent -= 1
+                else:
+                    result += char
         print(result)
 
 
