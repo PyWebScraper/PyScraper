@@ -139,6 +139,55 @@ def test_crawl_with_error():
 
         # Assert that no URLs were crawled due to the error
         assert len(crawled_urls) == 0
+def test_extract_elements_by_xpath():
+    html = '<div class="container"><h1>Title</h1><p>Content</p></div>'
+    selector = "//h1"
+    expected_elements = ['<h1>Title</h1>']
+
+    elements = ElementSelector.extract_elements_by_xpath(html, selector)
+
+    assert elements == expected_elements
+
+
+def test_extract_elements_by_tag():
+    html = '<div class="container"><h1>Title</h1><p>Content</p></div>'
+    selector = "<p>"
+    expected_elements = ['<p>Content</p>']
+
+    elements = ElementSelector.extract_elements_by_tag(html, selector)
+
+    assert elements == expected_elements
+
+
+def test_extract_elements_by_css_selector():
+    html = '<div class="container"><h1>Title</h1><p>Content</p></div>'
+    selector = ".container p"
+    expected_elements = ['<p>Content</p>']
+
+    elements = ElementSelector.extract_elements_by_css_selector(html, selector)
+
+    assert elements == expected_elements
+
+
+def test_filter_elements_by_attribute():
+    elements = ['<h1 id="title">Title</h1>', '<p class="content">Content</p>']
+    attr_name = "class"
+    attr_value = "content"
+    expected_elements = ['<p class="content">Content</p>']
+
+    filtered_elements = ElementSelector.filter_elements_by_attribute(elements, attr_name, attr_value)
+
+    assert filtered_elements == expected_elements
+
+
+def test_extract_elements():
+    html = '<div class="container"><h1>Title</h1><p>Content</p></div>'
+    selector = ".container p"
+    expected_elements = ['<p>Content</p>']
+
+    elements = ElementSelector.extract_elements(html, selector)
+
+    assert elements == expected_elements
 
 
 # Run the tests
