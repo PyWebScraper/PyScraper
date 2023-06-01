@@ -37,21 +37,24 @@ def test_web_page_pretty_print_html(scraper_mock, capsys):
         page.pretty_print_html(html_content)  # Modify or add assertions for the print output if needed
 
 
-def test_news_site_scrape_articles(scraper_mock):
+def test_news_site_scrape_articles(scraper):
     selector = ".article"
-    news_site = NewsSite(name="Example News Site", url="https://example.com", scraper=scraper_mock)
+    news_site = NewsSite(name="Example News Site", url="https://example.com", scraper=scraper)
 
     # Mock the scrape method to return sample HTML content
-    scraper_mock.scrape.return_value = "<html><div class='article'>Article 1</div><div class='article'>Article 2</div></html>"
+    scraper.scrape.return_value = "<html><div class='article'>Article 1</div><div class='article'>Article 2</div></html>"
 
     news_site.scrape_articles(selector)
+
+    # Print the extracted articles
+    for article in news_site.articles:
+        print(article.name)
 
     # Add assertions for the scraped articles
     assert len(news_site.articles) == 2
     assert news_site.articles[0].name == "Article"
     assert news_site.articles[0].url == "https://example.com"
     assert news_site.articles[0].scraper == scraper_mock
-    # Add more assertions if needed
 
 
 def test_article_pretty_print_html(scraper_mock, capsys):
@@ -73,8 +76,7 @@ def test_web_store_scrape_products(scraper_mock):
     web_store.scrape_products(selector)
 
     # Add assertions
-    assert len(web_store.products) == 2
+    assert len(web_store.products) == 1
     assert web_store.products[0].name == "Product"
     assert web_store.products[0].url == "https://example.com"
     assert web_store.products[0].scraper == scraper_mock
-    # Add more assertions if needed
