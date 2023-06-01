@@ -104,7 +104,7 @@ class Article(WebPage):
         Example:
             article = Article(name='Example Article', url='https://example.com/article', scraper=scraper, custom_attr='value')
         """
-        super().__init__(name, url, scraper=scraper)
+        super().__init__(name, url, scraper=scraper, html_content="")
         self.scraper = scraper
 
         # Set user-defined attributes
@@ -129,10 +129,25 @@ class WebStore(WebPage):
             web_store = WebStore(name='Example Web Store', url='https://example.com', scraper=scraper, attr1='value1', attr2='value2')
         """
         super().__init__(name, url, scraper, **kwargs)
+        self.scraper = scraper
         self.products = []
 
         for attr_name, attr_value in kwargs.items():
             setattr(self, attr_name, attr_value)
+
+    def scrape_products(self, selector):
+        """Scrapes products from the web store based on the provided selector.
+
+        Args:
+            selector (str): The CSS selector or HTML tag for the product elements.
+
+        Example:
+            web_store = WebStore(name='Example Web Store', url='https://example.com', scraper=scraper)
+            web_store.scrape_products(selector='.product-item')
+        """
+        html_content = self.scraper.scrape(self.url, 'html')
+        product_elements = ElementSelector.extract_elements(html_content, selector)
+        self.products = [Product(name="Product", url=self.url, scraper=self.scraper) for _ in product_elements]
 
 
 class Product(WebPage):

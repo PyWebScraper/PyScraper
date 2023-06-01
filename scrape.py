@@ -59,6 +59,28 @@ class Scraper:
         else:
             raise ValueError("Invalid data type. Expected bytes or dict.")
 
+
+def extract_urls(html_content, base_url):
+    """Extracts URLs from the HTML content.
+
+    Args:
+        html_content (str): The HTML content to extract URLs from.
+        base_url (str): The base URL of the web page.
+
+    Returns:
+        list: A list of extracted URLs.
+    """
+    pattern = r'<a\s+(?:[^>]*?\s+)?href=(["\'])(.*?)\1'
+    urls = []
+
+    for match in re.finditer(pattern, html_content):
+        href = match.group(2)
+        absolute_url = urljoin(base_url, href)
+        urls.append(absolute_url)
+
+    return urls
+
+
 class WebScraper:
     """A web crawler for scraping and extracting URLs from web pages."""
 
@@ -85,59 +107,60 @@ class WebScraper:
             return content.decode('utf-8')  # Decode content into a string
         return content
 
-    def extract_urls(self, html_content, parsed_url):
-        """Extracts URLs from the HTML content.
 
-                Args:
-                    html_content (str): The HTML content to extract URLs from.
-                    parsed_url (urllib.parse.ParseResult): The parsed URL of the web page.
+def parse_html(url, html_content):
+    """Parses the HTML content and extracts URLs.
 
-                Returns:
-                    list: A list of extracted URLs.
+           Args:
+               url (str): The URL of the web page.
+               html_content (str): The HTML content to parse.
 
-                Example:
-                    crawler = WebCrawler()
-                    html_content = crawler.scrape('https://example.com')
-                    parsed_url = crawler.parse_url('https://example.com')
-                    urls = crawler.extract_urls(html_content, parsed_url)
-                    for url in urls:
-                        print(url)
-                """
+           Returns:
+               list: A list of extracted URLs.
 
-        start_tag = '<a'
-        end_tag = '</a>'
-        href_attr = 'href='
-        url_prefixes = ('http://', 'https://')
+           Example:
+               crawler = WebCrawler()
+               html_content = crawler.scrape('https://example.com')
+               urls = crawler.parse_html('https://example.com', html_content)
+               for url in urls:
+                   print(url)
+           """
+    start_tag = '<a'
+    end_tag = '</a>'
+    href_attr = 'href='
+    url_prefixes = ('http://', 'https://')
 
-        urls = []
+    urls = []
 
-        while True:
-            start_index = html_content.find(start_tag)
-            if start_index == -1:
-                break
+    while True:
+        start_index = html_content.find(start_tag)
+        if start_index == -1:
+            break
 
-            end_index = html_content.find(end_tag, start_index)
-            if end_index == -1:
-                break
+        end_index = html_content.find(end_tag, start_index)
+        if end_index == -1:
+            break
 
-            anchor_content = html_content[start_index:end_index]
-            href_index = anchor_content.find(href_attr)
-            if href_index == -1:
-                continue
+        anchor_content = html_content[start_index:end_index]
+        href_index = anchor_content.find(href_attr)
+        if href_index == -1:
+            continue
 
-            href_start = anchor_content.find('"', href_index) + 1
-            href_end = anchor_content.find('"', href_start)
-            href = anchor_content[href_start:href_end]
+        href_start = anchor_content.find('"', href_index) + 1
+        href_end = anchor_content.find('"', href_start)
+        href = anchor_content[href_start:href_end]
 
-            if href.startswith(url_prefixes):
-                urls.append(href)
-            else:
-                absolute_url = urljoin(parsed_url.geturl(), href)
-                urls.append(absolute_url)
+        if href.startswith(url_prefixes):
+            urls.append(href)
+        else:
+            absolute_url = urljoin(url, href)
+            urls.append(absolute_url)
 
-            html_content = html_content[end_index:]
+        html_content = html_content[end_index:]
 
-        return urls
+    # Example: Print extracted URLs
+    for url in urls:
+        print(url)
 
 
 class WebCrawler:
@@ -193,7 +216,7 @@ class WebCrawler:
 
                 try:
                     html_content = self.scrape(current_url, 'html')
-                    parsed_urls = self.extract_urls(html_content, current_url)
+                    parsed_urls = extract_urls(html_content, current_url)
                     crawled_urls.append(current_url)
 
                     for parsed_url in parsed_urls:
@@ -215,81 +238,6 @@ class WebCrawler:
     def scrape(self, url, data_type):
         web_scraper = WebScraper()
         return web_scraper.scrape(url, data_type)
-
-    def parse_html(self, url, html_content):
-        """Parses the HTML content and extracts URLs.
-
-               Args:
-                   url (str): The URL of the web page.
-                   html_content (str): The HTML content to parse.
-
-               Returns:
-                   list: A list of extracted URLs.
-
-               Example:
-                   crawler = WebCrawler()
-                   html_content = crawler.scrape('https://example.com')
-                   urls = crawler.parse_html('https://example.com', html_content)
-                   for url in urls:
-                       print(url)
-               """
-        start_tag = '<a'
-        end_tag = '</a>'
-        href_attr = 'href='
-        url_prefixes = ('http://', 'https://')
-
-        urls = []
-
-        while True:
-            start_index = html_content.find(start_tag)
-            if start_index == -1:
-                break
-
-            end_index = html_content.find(end_tag, start_index)
-            if end_index == -1:
-                break
-
-            anchor_content = html_content[start_index:end_index]
-            href_index = anchor_content.find(href_attr)
-            if href_index == -1:
-                continue
-
-            href_start = anchor_content.find('"', href_index) + 1
-            href_end = anchor_content.find('"', href_start)
-            href = anchor_content[href_start:href_end]
-
-            if href.startswith(url_prefixes):
-                urls.append(href)
-            else:
-                absolute_url = urljoin(url, href)
-                urls.append(absolute_url)
-
-            html_content = html_content[end_index:]
-
-        # Example: Print extracted URLs
-        for url in urls:
-            print(url)
-
-
-    def extract_urls(self, html_content, base_url):
-        """Extracts URLs from the HTML content.
-
-        Args:
-            html_content (str): The HTML content to extract URLs from.
-            base_url (str): The base URL of the web page.
-
-        Returns:
-            list: A list of extracted URLs.
-        """
-        pattern = r'<a\s+(?:[^>]*?\s+)?href=(["\'])(.*?)\1'
-        urls = []
-
-        for match in re.finditer(pattern, html_content):
-            href = match.group(2)
-            absolute_url = urljoin(base_url, href)
-            urls.append(absolute_url)
-
-        return urls
 
 
 class ElementSelector:
