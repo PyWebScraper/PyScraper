@@ -59,6 +59,24 @@ class Scraper:
         else:
             raise ValueError("Invalid data type. Expected bytes or dict.")
 
+    @staticmethod
+    def extract_text(element):
+        """Extracts the text content from an HTML element."""
+        pattern = r'>\s*(.*?)\s*<'
+        match = re.search(pattern, element)
+        if match:
+            return match.group(1).strip()
+        return ""
+
+    @staticmethod
+    def extract_attribute(element, attribute):
+        """Extracts the value of the specified attribute from an HTML element."""
+        pattern = rf'{attribute}=[\'"](.*?)[\'"]'
+        match = re.search(pattern, element)
+        if match:
+            return match.group(1)
+        return ""
+
 
 def extract_urls(html_content, base_url):
     """Extracts URLs from the HTML content.
@@ -162,6 +180,8 @@ def parse_html(url, html_content):
     for url in urls:
         print(url)
 
+    return urls
+
 
 class WebCrawler:
     """A web crawler for scraping and extracting URLs from web pages."""
@@ -197,7 +217,7 @@ class WebCrawler:
             nonlocal active_threads
             with active_threads_lock:
                 active_threads += 1
-                print(f"Number of active threads: {active_threads}")
+
 
             while True:
                 try:
