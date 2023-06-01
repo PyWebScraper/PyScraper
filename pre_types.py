@@ -1,46 +1,48 @@
 from scrape import ElementSelector
 
+
 class WebPage:
     """Represents a web page."""
+
     def __init__(self, name, url, html_content, **kwargs):
-        """Initialize a WebPage object.
+        """
+        Initialize a WebPage object.
 
-                Args:
-                    url (str): The URL of the web page.
-                    html_content (str): The HTML content of the web page.
-                    name (str, optional): The name of the web page. Defaults to an empty string.
-                    sub_urls (list, optional): A list of sub-URLs associated with the web page. Defaults to None.
-                    **kwargs: Additional user-defined attributes.
+        Args:
+            name (str): The name of the web page.
+            url (str): The URL of the web page.
+            html_content (str): The HTML content of the web page.
+            **kwargs: Additional user-defined attributes.
 
-                Example:
-                    page = WebPage(url='https://example.com', html_content='<html>...</html>', name='Example Page')
-                """
-
+        Example:
+            page = WebPage(name='Example Page', url='https://example.com', html_content='<html>...</html>',
+                           sub_urls=['https://example.com/news'], custom_attribute='Custom Value')
+        """
+        self.name = name
         self.url = url
         self.html_content = html_content
-        self.name = name
 
         # Set user-defined attributes
         for attr_name, attr_value in kwargs.items():
             setattr(self, attr_name, attr_value)
 
-
     @staticmethod
     def pretty_print_html(html_content, indent_size=4, initial_indent=0):
         """Pretty print the HTML content of the web page.
 
-               Args:
-                   indent_size (int, optional): The size of the indentation. Defaults to 4.
+        Args:
+            html_content (str): The HTML content of the web page.
+            indent_size (int, optional): The size of the indentation. Defaults to 4.
+            initial_indent (int, optional): The initial indentation level. Defaults to 0.
 
-               Example:
-                   page = WebPage(url='https://example.com', html_content='<html>...</html>')
-                   page.pretty_print_html()
-               """
+        Example:
+            page = WebPage(name='Example Page', url='https://example.com', html_content='<html>...</html>')
+            WebPage.pretty_print_html(page.html_content)
+        """
 
         result = ""
 
         # Convert bytes to string
-
         decoded_content = html_content.decode('utf-8')
 
         for char in decoded_content:
@@ -59,23 +61,26 @@ class WebPage:
 
 class NewsSite(WebPage):
     """Represents a news site."""
-    def __init__(self, name, url, scraper):
-        """Initialize a NewsSite object.
 
-            Args:
-                url (str): The URL of the news site.
-                html_content (str): The HTML content of the news site.
-                name (str, optional): The name of the news site. Defaults to an empty string.
-                sub_urls (list, optional): A list of sub-URLs associated with the news site. Defaults to None.
-                latest_articles (list, optional): A list of latest articles on the news site. Defaults to None.
-                **kwargs: Additional user-defined attributes.
-
-            Example:
-                news_site = NewsSite(url='https://example.com', html_content='<html>...</html>', name='Example News Site')
+    def __init__(self, name, url, scraper, **kwargs):
         """
-        super().__init__(name, url, scraper)
+        Initialize a NewsSite object.
+
+        Args:
+            name (str): The name of the news site.
+            url (str): The URL of the news site.
+            scraper (WebScraper): The web scraper used for scraping.
+            **kwargs: Additional user-defined attributes.
+
+        Example:
+            news_site = NewsSite(name='Example News Site', url='https://example.com', scraper=scraper, attr1='value1', attr2='value2')
+        """
+        super().__init__(name, url, scraper, **kwargs)
         self.scraper = scraper
         self.articles = []
+
+        for attr_name, attr_value in kwargs.items():
+            setattr(self, attr_name, attr_value)
 
     def scrape_articles(self, selector):
         """Scrapes articles from the news site based on the provided selector."""
@@ -107,26 +112,27 @@ class Article(WebPage):
             setattr(self, attr_name, attr_value)
 
 
-
 class WebStore(WebPage):
     """Represents a web store."""
-    def __init__(self, name, url, scraper):
-        """Initialize a WebStore object.
 
-               Args:
-                   url (str): The URL of the web store.
-                   html_content (str): The HTML content of the web store.
-                   name (str, optional): The name of the web store. Defaults to an empty string.
-                   sub_urls (list, optional): A list of sub-URLs associated with the web store. Defaults to None.
-                   products (list, optional): A list of products available in the web store. Defaults to None.
-                   **kwargs: Additional user-defined attributes.
+    def __init__(self, name, url, scraper, **kwargs):
+        """
+        Initialize a WebStore object.
 
-               Example:
-                   web_store = WebStore(url='https://example.com', html_content='<html>...</html>', name='Example Web Store')
-               """
-        super().__init__(name, url, scraper)
-        self.scraper = scraper
+        Args:
+            name (str): The name of the web store.
+            url (str): The URL of the web store.
+            scraper (WebScraper): The web scraper used for scraping.
+            **kwargs: Additional user-defined attributes.
+
+        Example:
+            web_store = WebStore(name='Example Web Store', url='https://example.com', scraper=scraper, attr1='value1', attr2='value2')
+        """
+        super().__init__(name, url, scraper, **kwargs)
         self.products = []
+
+        for attr_name, attr_value in kwargs.items():
+            setattr(self, attr_name, attr_value)
 
 
 class Product(WebPage):
@@ -152,17 +158,20 @@ class Product(WebPage):
         for attr_name, attr_value in kwargs.items():
             setattr(self, attr_name, attr_value)
 
-    def scrape_description(self, html_content):
+    def scrape_description(self, html_content, selector='//div[@class="product-description"]'):
         """Scrapes the description of the product.
 
         Args:
             html_content (str): The HTML content of the product page.
+            selector (str, optional): The XPath selector for the description element. Defaults to
+                '//div[@class="product-description"]'.
 
         Example:
-            product = Product(name='Product 1', url='https://www.example.com/product1', html_content='<html>...</html>', scraper=scraper)
+            product = Product(name='Product 1', url='https://www.example.com/product1', scraper=scraper)
             product.scrape_description(html_content)
+            # OR
+            product.scrape_description(html_content, selector='//div[@class="custom-description"]')
         """
-        description_elements = ElementSelector.extract_elements(html_content,
-                                                                selector='//div[@class="product-description"]')
+        description_elements = ElementSelector.extract_elements(html_content, selector)
         if description_elements:
             self.description = ' '.join(element.text.strip() for element in description_elements)
