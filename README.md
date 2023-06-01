@@ -23,7 +23,7 @@ If you are on unix systems
 ````
 > source venv/bin/activate
 ````
-* install python decencies to the virtual environment
+* install python dependencies to the virtual environment
 ````
-(venv) > pip3 install -r rewuirements.txt
+(venv) > pip3 install -r requirements.txt
 ````
