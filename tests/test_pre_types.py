@@ -76,7 +76,7 @@ def test_web_store_scrape_products(scraper_mock):
     web_store.scrape_products(selector)
 
     # Add assertions
-    assert len(web_store.products) == 1
+    assert len(web_store.products) == 2
     assert web_store.products[0].name == "Product"
     assert web_store.products[0].url == "https://example.com"
     assert web_store.products[0].scraper == scraper_mock
