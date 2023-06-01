@@ -8,6 +8,7 @@ mock_json = {
     "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 }
 
+
 # Test the Scraper class
 class TestScraper:
     def test_scrape_html(self):
@@ -105,6 +106,7 @@ def test_web_scraper():
     assert isinstance(json_data, dict)
     assert json_data == mock_json
 
+
 def test_crawl_single_page():
     # Create an instance of WebCrawler
     crawler = WebCrawler()
@@ -137,7 +139,6 @@ def test_crawl_multiple_pages():
         assert 'https://example.com/page2' not in crawled_urls  # Updated assertion
 
 
-
 def test_crawl_with_error():
     # Create an instance of WebCrawler
     crawler = WebCrawler()
@@ -149,6 +150,7 @@ def test_crawl_with_error():
 
         # Assert that no URLs were crawled due to the error
         assert len(crawled_urls) == 0
+
 
 def test_extract_elements_by_xpath():
     html = '<div class="container"><h1>Title</h1><p>Content</p></div>'
@@ -204,8 +206,6 @@ def test_extract_elements():
     print(f"Actual elements: {elements}")
 
     assert elements == expected_elements
-
-
 
 
 # Run the tests

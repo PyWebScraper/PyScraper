@@ -43,9 +43,9 @@ class WebPage:
         result = ""
 
         # Convert bytes to string
-        decoded_content = html_content.decode('utf-8')
+        #decoded_content = html_content.decode('utf-8')
 
-        for char in decoded_content:
+        for char in html_content:
             if char == '<':
                 result += "\n" + " " * (indent_size * initial_indent) + char
                 initial_indent += 1
@@ -84,10 +84,18 @@ class NewsSite(WebPage):
 
     def scrape_articles(self, selector):
         """Scrapes articles from the news site based on the provided selector."""
-        html_content = self.scraper.scrape(self.url, 'html')
-        article_elements = ElementSelector.extract_elements_by_css_selector(html_content, selector)
-        self.articles = [Article(name="Article", url=self.url, scraper=self.scraper) for _ in article_elements]
 
+        html_content = self.scraper.scrape(self.url, 'html')
+        article_elements = ElementSelector.extract_elements(html_content, selector)
+        self.articles = [Article(name="Article", url=self.url, scraper=self.scraper, html_content=element) for element
+                         in article_elements]
+
+    def scrape_articles2(self, selector):
+        """Scrapes articles from the news site based on the provided selector."""
+        html_content = self.scraper.scrape(self.url, 'html')
+        article_elements = ElementSelector.extract_elements(html_content, selector)
+        self.articles = [Article(name="Article", url=self.url, scraper=self.scraper, html_content=element) for element
+                         in article_elements]
 
 class Article(WebPage):
     """Represents an article on a news site."""
@@ -147,7 +155,7 @@ class WebStore(WebPage):
         """
         html_content = self.scraper.scrape(self.url, 'html')
         product_elements = ElementSelector.extract_elements(html_content, selector)
-        self.products = [Product(name="Product", url=self.url, scraper=self.scraper) for _ in product_elements]
+        self.products = [Product(name="Product", url=self.url, scraper=self.scraper, html_content=element) for element in product_elements]
 
 
 class Product(WebPage):
